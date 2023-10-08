@@ -139,8 +139,6 @@ def BFS(problem):
         if problem.isGoal(state):
             return cost, history
 
-        print(len(state))
-
         if state not in reached:
             reached.add(state)
 
@@ -149,7 +147,7 @@ def BFS(problem):
             new_cost = cost + problem.cost(act)
 
             frontier.append((new_state, new_cost, history +
-                            [(state, new_cost, new_state)]))
+                            [(state, act, new_state)]))
 
     return 0, []
 
