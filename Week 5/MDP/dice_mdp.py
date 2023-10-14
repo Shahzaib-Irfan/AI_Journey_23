@@ -30,6 +30,9 @@ class DICEMDP:
         """
         return 'end' == s or 'quit' == s
 
+    def states(self):
+        return ['in', 'end']
+
     def actions(self, s):
         """
         This function allows user to make choice and reward will be on stake.
@@ -112,4 +115,47 @@ def implement_game():
             break
 
 
-implement_game()
+def policy_evaluation(mdp, echelon=0.2):
+    prev = 0
+    current = 0
+    maximum = -1
+
+    def implement_game(a, act):
+        nonlocal prev, current, maximum
+        while True:
+            action = a.actions(act)
+
+            transition = a.transition('in', action)
+            print("Transition: ", transition)
+
+            transition_prob = a.transition_prob('in', action, transition)
+
+            print("Transition Probability: ", transition_prob)
+
+            a.total_reward += a.reward('in', action, transition)
+            print("Previous: ", prev)
+            current += transition_prob * \
+                (a.reward('in', action, transition) + prev)
+            maximum = max(maximum, current - prev)
+            prev = current
+            print("Total Reward: ", a.total_reward)
+            print("Maximum: ", maximum)
+            print("Current: ", current)
+            if a.isGoal(transition):
+                return maximum
+
+    dict = {}
+    for a in mdp.states():
+        dict[a] = 0
+    for i in range(2):
+        for a, n in dict.items():
+            dict[a] = implement_game(mdp, a)
+        if maximum <= echelon:
+            print("dict: ", dict.items())
+            print("Maximum: ", maximum)
+            break
+
+
+a = DICEMDP(0)
+policy_evaluation(a)
+# implement_game()
